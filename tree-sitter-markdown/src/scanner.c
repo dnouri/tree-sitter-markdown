@@ -1383,8 +1383,13 @@ static bool scan(Scanner *s, TSLexer *lexer, const bool *valid_symbols) {
         }
         if (s->open_blocks.size > 0) {
             lexer->result_symbol = BLOCK_CLOSE;
-            if (!s->simulate)
+            if (!s->simulate) {
                 pop_block(s);
+                if (s->open_blocks.size == 0) {
+                    s->state &= ~(STATE_MATCHING | STATE_CLOSE_BLOCK);
+                    s->matched = 0;
+                }
+            }
             return true;
         }
         return false;
